@@ -7,17 +7,30 @@ from contextlib import asynccontextmanager
 from src.redis_client import redis_client
 from fastapi.middleware.cors import CORSMiddleware
 
+from src.core.logging.config import configure_logging
+from src.core.logging.middleware import (request_logging_middleware)
+from src.core.logging import get_logger
+
+configure_logging()
+
+logger = get_logger()
+
 @asynccontextmanager
 async def lifespan(app:FastAPI):
+    logger.info("application_starting")
     await redis_client.ping()
     print("redis connected")
 
     yield
 
+    logger.info("application_shutting_down")
     await redis_client.aclose()
     print("redis connection closed")
 
 app = FastAPI(lifespan=lifespan)
+
+app.middleware("http")(request_logging_middleware)
+   
 
 app.add_middleware(
     CORSMiddleware,

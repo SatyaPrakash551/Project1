@@ -8,6 +8,9 @@ from fastapi.exceptions import HTTPException
 from fastapi import status
 from src.exception.resourceNotFound import ResourceNotFoundException
 from src.utils.tokenUtils import generateToken
+from src.core.logging import get_logger
+
+logger = get_logger(__name__)
 
 class UserService:
     def __init__(self,user_repo:UserRepository):
@@ -23,16 +26,24 @@ class UserService:
         # return {"message":"user not found"}
 
     async def signIn(self, email: str, password : str):
+        logger.debug("fetching_user",email= email)
         dbUser = await self.user_repo.getUser(email)
-        if not dbUser:
-            raise ResourceNotFoundException("You email is incorrect or please register yourself first")
-        isauth = decryptPassword(password , dbUser.password)
-        if not isauth:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="your password is incorrect")
-        token = generateToken(dbUser.user_id, dbUser.email)
-        data = {
-            "user_id" : dbUser.user_id,
-            "email" : dbUser.email,
-            "token" : token
-        }
-        return data
+        try:
+            if not dbUser:
+                logger.warning("user_not_found",email = email)
+
+                raise ResourceNotFoundException("You email is incorrect or please register yourself first")
+            isauth = decryptPassword(password , dbUser.password)
+            if not isauth:
+                raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="your password is incorrect")
+            token = generateToken(dbUser.user_id, dbUser.email)
+            logger.info("user_fetched_successfully",email = email)
+            data = {
+                "user_id" : dbUser.user_id,
+                "email" : dbUser.email,
+                "token" : token
+            }
+            return data
+        except Exception:
+            logger.exception("user_fetched_failed",email= email)
+            raise

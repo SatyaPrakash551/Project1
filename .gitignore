@@ -1,51 +1,19 @@
-
-# Python cache
-__pycache__/
-*.py[cod]
-*.pyo
-*.pyd
-
-# Virtual environments
-.venv/
-venv/
-env/
-ENV/
-
-# Python testing and coverage
-.pytest_cache/
-.coverage
-htmlcov/
-.tox/
-
-# Environment variables
+# Environment variables and secrets
 .env
 .env.*
 !.env.example
 
-# Logs
-*.log
+# Python generated files
+__pycache__/
+*.py[cod]
 
-# IDE
+# Virtual environments
+.venv/
+venv/
+
+# Redis persistence files
+dump.rdb
+appendonlydir/
+
+# Local development files
 .vscode/
-.idea/
-
-# OS files
-.DS_Store
-Thumbs.db
-
-# Build files
-build/
-dist/
-*.egg-info/
-
-# Alembic
-alembic/versions/__pycache__/
-
-# Database
-*.db
-*.sqlite
-*.sqlite3
-
-# Temporary files
-*.tmp
-*.bak
