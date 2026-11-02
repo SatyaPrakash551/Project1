@@ -39,5 +39,4 @@ services:
 
 volumes:
   redis-data:
-    external: true
     name: redis-learning-data
