@@ -12,6 +12,9 @@ jobs:
   test-and-build:
     runs-on: ubuntu-latest
 
+    env:
+      DB_URL: postgresql+asyncpg://ci_user:ci_password@127.0.0.1:5432/ci_test_db
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
